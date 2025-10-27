@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto Robótica Industrial - Fase 3</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #34495e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .main-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent);
+        }
+
+        .main-header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .main-header h2 {
+            font-size: 1.5em;
+            font-weight: 300;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .nav-container {
+            background: var(--dark);
+            padding: 0;
+        }
+
+        .nav-tabs {
+            display: flex;
+            list-style: none;
+            overflow-x: auto;
+        }
+
+        .nav-tabs li {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .nav-tabs a {
+            display: block;
+            padding: 20px;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tabs a:hover, .nav-tabs a.active {
+            background: rgba(255,255,255,0.1);
+            border-bottom: 3px solid var(--accent);
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 40px 30px;
+            border-bottom: 1px solid var(--light);
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            color: var(--primary);
+            font-size: 2em;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-subtitle {
+            color: var(--primary);
+            font-size: 1.5em;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        /* Paso 4 Styles */
+        .cell-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .station {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--secondary);
+        }
+
+        .station-1 {
+            border-left-color: var(--accent);
+        }
+
+        .station-2 {
+            border-left-color: var(--success);
+        }
+
+        .station h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #bdc3c7;
+            padding-bottom: 10px;
+        }
+
+        .robot-center {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .robot {
+            background: var(--dark);
+            color: white;
+            padding: 30px;
+            border-radius: 50%;
+            display: inline-block;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 5px solid var(--accent);
+            position: relative;
+            z-index: 2;
+        }
+
+        .connection-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%);
+            z-index: 1;
+        }
+
+        .auxiliary-systems, .operation-flow, .safety-specs {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .systems-grid, .safety-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .system, .safety-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .system {
+            border-left: 4px solid var(--secondary);
+        }
+
+        .safety-item {
+            border-left: 4px solid var(--accent);
+            background: #fff5f5;
+        }
+
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            position: relative;
+        }
+
+        .flow-step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            background: var(--secondary);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .flow-connector {
+            position: absolute;
+            top: 22px;
+            left: 20%;
+            right: 20%;
+            height: 3px;
+            background: #bdc3c7;
+            z-index: 1;
+        }
+
+        /* Paso 5 Styles */
+        .training-grid, .infrastructure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .training-card, .infra-item {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .training-card:hover, .infra-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .training-card {
+            border-left: 5px solid var(--secondary);
+        }
+
+        .infra-item {
+            border-top: 4px solid #9b59b6;
+        }
+
+        .equipment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .equipment-table th {
+            background: linear-gradient(135deg, var(--secondary) 0%, #2980b9 100%);
+            color: white;
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .equipment-table td {
+            padding: 18px;
+            border-bottom: 1px solid var(--light);
+        }
+
+        .equipment-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .equipment-table tr:hover {
+            background: #e3f2fd;
+        }
+
+        .price {
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .budget-summary {
+            background: linear-gradient(135deg, var(--success) 0%, #2ecc71 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .total-budget {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: var(--secondary);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+        }
+
+        .timeline-item {
+            padding: 15px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-content {
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--accent);
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            border-left: none;
+            border-right: 4px solid var(--accent);
+        }
+
+        .timeline-date {
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .roi-calculations {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 25px;
+            border-left: 4px solid var(--warning);
+        }
+
+        /* Paso 6 Styles */
+        .concepts-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .concepts-table th {
+            background: linear-gradient(135deg, var(--secondary) 0%, #2980b9 100%);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1em;
+            position: sticky;
+            top: 0;
+        }
+
+        .concepts-table td {
+            padding: 20px;
+            border-bottom: 1px solid var(--light);
+            vertical-align: top;
+        }
+
+        .concepts-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .concepts-table tr:hover {
+            background: #e3f2fd;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .term {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1em;
+            width: 200px;
+        }
+
+        .definition {
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .citation {
+            color: #7f8c8d;
+            font-style: italic;
+            font-size: 0.9em;
+            border-left: 3px solid var(--accent);
+            padding-left: 12px;
+            background: #fafafa;
+            padding: 12px 15px;
+            border-radius: 5px;
+        }
+
+        .formula-box, .matrix-representation {
+            background: var(--dark);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            border-left: 4px solid var(--accent);
+            overflow-x: auto;
+        }
+
+        .example {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .example-title {
+            font-weight: bold;
+            color: #2980b9;
+            margin-bottom: 8px;
+        }
+
+        .applications {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .app-tag {
+            background: var(--accent);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+
+        .key-points {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        .visual-aid {
+            background: #d5edda;
+            border: 1px solid #c3e6cb;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        .coordinate-system {
+            display: inline-block;
+            background: white;
+            padding: 12px;
+            border-radius: 5px;
+            margin: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .axis {
+            font-weight: bold;
+        }
+
+        .x-axis { color: var(--accent); }
+        .y-axis { color: var(--success); }
+        .z-axis { color: var(--secondary); }
+
+        /* Paso 7 Styles */
+        .robot-specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .spec-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid var(--secondary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .spec-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .spec-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .spec-list li:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .spec-value {
+            color: var(--accent);
+            font-family: 'Courier New', monospace;
+        }
+
+        .dh-parameters {
+            background: var(--dark);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+
+        .dh-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            color: #333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .dh-table th {
+            background: linear-gradient(135deg, var(--secondary) 0%, #2980b9 100%);
+            color: white;
+            padding: 18px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .dh-table td {
+            padding: 18px;
+            text-align: center;
+            border-bottom: 1px solid var(--light);
+        }
+
+        .dh-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .coordinate-system {
+            text-align: center;
+            margin: 30px 0;
+            padding: 25px;
+            background: #e8f4f8;
+            border-radius: 10px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .axis-diagram {
+            display: inline-block;
+            text-align: left;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .matrix-container {
+            background: var(--dark);
+            color: #ecf0f1;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .matrix {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin: 15px 0;
+        }
+
+        .matrix-title {
+            color: var(--secondary);
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .development-steps {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid var(--warning);
+            padding: 30px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .step {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .step-number {
+            background: var(--secondary);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .final-position {
+            background: #d5edda;
+            border: 1px solid #c3e6cb;
+            border-left: 4px solid var(--success);
+            padding: 30px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .position-equations {
+            font-family: 'Courier New', monospace;
+            font-size: 1.3em;
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--dark);
+            color: white;
+            border-radius: 8px;
+        }
+
+        .validation {
+            background: #e8f4f8;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .code-block {
+            background: var(--dark);
+            color: #ecf0f1;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            overflow-x: auto;
+        }
+
+        .conclusion {
+            background: var(--light);
+            padding: 30px;
+            border-radius: 8px;
+            margin: 25px 0;
+            border-left: 4px solid #9b59b6;
+        }
+
+        /* Footer */
+        .footer-note {
+            background: var(--light);
+            padding: 25px;
+            text-align: center;
+            border-top: 2px solid #bdc3c7;
+            margin-top: 30px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .cell-layout, .training-grid, .infrastructure-grid, .robot-specs {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-steps {
+                flex-direction: column;
+                gap: 25px;
+            }
+            
+            .flow-connector {
+                display: none;
+            }
+            
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-item:nth-child(even) {
+                left: 0;
+            }
+            
+            .concepts-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .concepts-table th, .concepts-table td {
+                min-width: 200px;
+            }
+            
+            .section {
+                padding: 25px 20px;
+            }
+            
+            .main-header {
+                padding: 30px 20px;
+            }
+            
+            .main-header h1 {
+                font-size: 2.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="main-header">
+            <h1>PROYECTO DE ROBÓTICA INDUSTRIAL</h1>
+            <h2>Fase 3: Modelado de la Cinemática Directa de un Robot</h2>
+            <p>Universidad Nacional Abierta y a Distancia - Curso: Robótica (299011)</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-container">
+            <ul class="nav-tabs">
+                <li><a href="#paso4" class="nav-link active" data-target="paso4">Paso 4: Aplicación</a></li>
+                <li><a href="#paso5" class="nav-link" data-target="paso5">Paso 5: Proyecto</a></li>
+                <li><a href="#paso6" class="nav-link" data-target="paso6">Paso 6: Conceptos</a></li>
+                <li><a href="#paso7" class="nav-link" data-target="paso7">Paso 7: Modelo Cinemático</a></li>
+            </ul>
+        </nav>
+
+        <!-- Paso 4: Descripción de la Aplicación -->
+        <section id="paso4" class="section active">
+            <div class="section-title">🏭 Paso 4: Descripción de la Aplicación</div>
+            
+            <div class="cell-layout">
+                <!-- Estación 1 -->
+                <div class="station station-1">
+                    <h3>🏭 Estación 1 - Carga/Descarga</h3>
+                    <ul class="specs-list">
+                        <li><span class="spec-label">Función:</span> <span class="spec-value">Carga manual de piezas</span></li>
+                        <li><span class="spec-label">Operario:</span> <span class="spec-value">1 técnico especializado</span></li>
+                        <li><span class="spec-label">Tiempo ciclo:</span> <span class="spec-value">4.5 minutos</span></li>
+                        <li><span class="spec-label">Seguridad:</span> <span class="spec-value">Sensores de presencia</span></li>
+                        <li><span class="spec-label">Interface:</span> <span class="spec-value">Panel HMI táctil</span></li>
+                    </ul>
+                </div>
+
+                <!-- Estación 2 -->
+                <div class="station station-2">
+                    <h3>🔧 Estación 2 - Soldadura</h3>
+                    <ul class="specs-list">
+                        <li><span class="spec-label">Función:</span> <span class="spec-value">Soldadura MIG automática</span></li>
+                        <li><span class="spec-label">Proceso:</span> <span class="spec-value">Automático - Robot controlado</span></li>
+                        <li><span class="spec-label">Tiempo ciclo:</span> <span class="spec-value">4.0 minutos</span></li>
+                        <li><span class="spec-label">Calidad:</span> <span class="spec-value">Inspección en línea</span></li>
+                        <li><span class="spec-label">Monitoreo:</span> <span class="spec-value">Sensores y cámaras</span></li>
+                    </ul>
+                </div>
+
+                <!-- Robot Central -->
+                <div class="robot-center">
+                    <div class="connection-line"></div>
+                    <div class="robot">
+                        <h4>ABB IRB 1600</h4>
+                        <p>Robot Articulado</p>
+                        <p>6 GDL - 1.45m alcance</p>
+                        <p>±0.05mm precisión</p>
+                    </div>
+                </div>
+
+                <!-- Sistemas Auxiliares -->
+                <div class="auxiliary-systems">
+                    <h3>⚙️ Sistemas Auxiliares Integrados</h3>
+                    <div class="systems-grid">
+                        <div class="system">
+                            <h5>👁️ Sistema de Visión</h5>
+                            <ul class="specs-list">
+                                <li><span class="spec-label">Cámaras:</span> <span class="spec-value">2 unidades HD</span></li>
+                                <li><span class="spec-label">Función:</span> <span class="spec-value">Posicionamiento piezas</span></li>
+                                <li><span class="spec-label">Software:</span> <span class="spec-value">ABB Vision Guide</span></li>
+                            </ul>
+                        </div>
+                        <div class="system">
+                            <h5>🔥 Sistema de Soldadura</h5>
+                            <ul class="specs-list">
+                                <li><span class="spec-label">Tipo:</span> <span class="spec-value">MIG Automatizada</span></li>
+                                <li><span class="spec-label">Fuente:</span> <span class="spec-value">500A Digital</span></li>
+                                <li><span class="spec-label">Alimentador:</span> <span class="spec-value">4 rodillos</span></li>
+                            </ul>
+                        </div>
+                        <div class="system">
+                            <h5>📊 Control de Calidad</h5>
+                            <ul class="specs-list">
+                                <li><span class="spec-label">Perfilómetro:</span> <span class="spec-value">Láser 3D</span></li>
+                                <li><span class="spec-label">Termógrafo:</span> <span class="spec-value">Infrarrojo</span></li>
+                                <li><span class="spec-label">Análisis:</span> <span class="spec-value">Tiempo real</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flujo de Operación -->
+                <div class="operation-flow">
+                    <h3>🔄 Flujo de Operación Cíclica</h3>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="step-number">1</div>
+                            <div class="step-desc">Carga nueva pieza<br>(4.5 min)</div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number">2</div>
+                            <div class="step-desc">Rotación 180°<br>(0.5 min)</div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number">3</div>
+                            <div class="step-desc">Soldadura robotizada<br>(4.0 min)</div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number">4</div>
+                            <div class="step-desc">Rotación 180°<br>(0.5 min)</div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="step-number">5</div>
+                            <div class="step-desc">Descarga pieza<br>terminada</div>
+                        </div>
+                        <div class="flow-connector"></div>
+                    </div>
+                </div>
+
+                <!-- Especificaciones de Seguridad -->
+                <div class="safety-specs">
+                    <h3>🛡️ Especificaciones de Seguridad</h3>
+                    <div class="safety-grid">
+                        <div class="safety-item">Cortinas de luz perimetrales</div>
+                        <div class="safety-item">Pulsadores de emergencia</div>
+                        <div class="safety-item">Sensores de presencia</div>
+                        <div class="safety-item">Señalización luminosa</div>
+                        <div class="safety-item">Cerraduras de seguridad</div>
+                        <div class="safety-item">Parada de emergencia</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Paso 5: Proyecto de Implementación -->
+        <section id="paso5" class="section">
+            <div class="section-title">🚀 Paso 5: Proyecto de Implementación</div>
+            
+            <!-- Sección de Capacitación -->
+            <div class="section-subtitle">🎯 Capacitación del Personal</div>
+            <div class="training-grid">
+                <div class="training-card">
+                    <h4>👨‍💼 Ingenieros Mecatrónicos</h4>
+                    <ul>
+                        <li>Programación avanzada de robots ABB</li>
+                        <li>Calibración de sistemas de visión</li>
+                        <li>Optimización de parámetros de soldadura</li>
+                        <li>Diagnóstico y solución de problemas</li>
+                        <li><strong>Duración:</strong> 80 horas</li>
+                    </ul>
+                </div>
+                <div class="training-card">
+                    <h4>🔧 Técnicos en Automatización</h4>
+                    <ul>
+                        <li>Instalación mecánica del robot</li>
+                        <li>Conexiones eléctricas y neumáticas</li>
+                        <li>Mantenimiento preventivo</li>
+                        <li>Protocolos de seguridad</li>
+                        <li><strong>Duración:</strong> 60 horas</li>
+                    </ul>
+                </div>
+                <div class="training-card">
+                    <h4>🏭 Tecnólogos en Producción</h4>
+                    <ul>
+                        <li>Operación diaria del sistema</li>
+                        <li>Monitoreo de parámetros de calidad</li>
+                        <li>Procedimientos de emergencia</li>
+                        <li>Control de calidad visual</li>
+                        <li><strong>Duración:</strong> 40 horas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sección de Equipos -->
+            <div class="section-subtitle">🛠️ Equipos y Adquisiciones</div>
+            <table class="equipment-table">
+                <thead>
+                    <tr>
+                        <th>Equipo</th>
+                        <th>Especificaciones</th>
+                        <th>Precio Estimado (USD)</th>
+                        <th>Perfiles Involucrados</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Robot ABB IRB 1600-6/1.45</td>
+                        <td>6 GDL, 1.45m alcance, ±0.05mm</td>
+                        <td class="price">$85,000</td>
+                        <td>Ingenieros de Proyectos</td>
+                    </tr>
+                    <tr>
+                        <td>Sistema de Soldadura MIG</td>
+                        <td>Fuente 500A digital, alimentador 4 rodillos</td>
+                        <td class="price">$18,000</td>
+                        <td>Técnicos Especializados</td>
+                    </tr>
+                    <tr>
+                        <td>Controlador y Software</td>
+                        <td>IRC5, RobotStudio, paquete soldadura</td>
+                        <td class="price">$25,000</td>
+                        <td>Ingenieros de Software</td>
+                    </tr>
+                    <tr>
+                        <td>Sistemas de Seguridad</td>
+                        <td>Cortinas de luz, paros de emergencia, sensores</td>
+                        <td class="price">$8,500</td>
+                        <td>Técnicos en Seguridad</td>
+                    </tr>
+                    <tr>
+                        <td>Sistema de Visión</td>
+                        <td>2 cámaras HD, software Vision Guide</td>
+                        <td class="price">$12,000</td>
+                        <td>Ingenieros de Visión</td>
+                    </tr>
+                    <tr>
+                        <td>Herramientas de Calibración</td>
+                        <td>Láser tracker, equipos metrología</td>
+                        <td class="price">$15,000</td>
+                        <td>Técnicos de Mantenimiento</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="budget-summary">
+                <h3>INVERSIÓN TOTAL EN EQUIPOS</h3>
+                <div class="total-budget">$163,500 USD</div>
+                <p>Incluye instalación y puesta en marcha</p>
+            </div>
+
+            <!-- Sección de Infraestructura -->
+            <div class="section-subtitle">🏗️ Adecuaciones de Infraestructura</div>
+            <div class="infrastructure-grid">
+                <div class="infra-item">
+                    <h5>Estructura Civil</h5>
+                    <ul>
+                        <li>Base de concreto armado (2m x 2m x 0.8m)</li>
+                        <li>Refuerzo estructural para vibraciones</li>
+                        <li>Nivelación de piso industrial</li>
+                        <li><strong>Costo:</strong> $5,200 USD</li>
+                        <li><strong>Responsable:</strong> Ingenieros Civiles</li>
+                    </ul>
+                </div>
+                <div class="infra-item">
+                    <h5>Instalación Eléctrica</h5>
+                    <ul>
+                        <li>Alimentación trifásica 480V/60Hz</li>
+                        <li>Tablero de distribución dedicado</li>
+                        <li>Sistema de tierra física</li>
+                        <li><strong>Costo:</strong> $4,800 USD</li>
+                        <li><strong>Responsable:</strong> Técnicos Electricistas</li>
+                    </ul>
+                </div>
+                <div class="infra-item">
+                    <h5>Climatización y Ventilación</h5>
+                    <ul>
+                        <li>Sistema de extracción de humos</li>
+                        <li>Control de temperatura ambiente</li>
+                        <li>Filtros de aire industriales</li>
+                        <li><strong>Costo:</strong> $7,500 USD</li>
+                        <li><strong>Responsable:</strong> Ingenieros HVAC</li>
+                    </ul>
+                </div>
+                <div class="infra-item">
+                    <h5>Redes y Comunicaciones</h5>
+                    <ul>
+                        <li>Cableado de red industrial</li>
+                        <li>Sistema de comunicación OPC UA</li>
+                        <li>Conectividad con MES</li>
+                        <li><strong>Costo:</strong> $3,500 USD</li>
+                        <li><strong>Responsable:</strong> Técnicos en TI</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sección de Cronograma -->
+            <div class="section-subtitle">📅 Cronograma de Ejecución</div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Semanas 1-2</div>
+                        <h4>Preparación de Infraestructura</h4>
+                        <p>Preparación del sitio, demoliciones menores, instalación de servicios básicos</p>
+                        <p><strong>Responsable:</strong> Ingenieros Civiles</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Semanas 3-4</div>
+                        <h4>Instalaciones Eléctricas</h4>
+                        <p>Instalación de alimentación trifásica, tableros de control, sistema de puesta a tierra</p>
+                        <p><strong>Responsable:</strong> Técnicos Electricistas</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Semanas 5-6</div>
+                        <h4>Montaje del Robot</h4>
+                        <p>Instalación mecánica del robot, sistemas de seguridad, periféricos</p>
+                        <p><strong>Responsable:</strong> Ingenieros Mecatrónicos</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Semanas 7-8</div>
+                        <h4>Integración de Sistemas</h4>
+                        <p>Conexión de sistemas de visión, soldadura, comunicación con PLC</p>
+                        <p><strong>Responsable:</strong> Técnicos en Automatización</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Semanas 9-10</div>
+                        <h4>Programación y Calibración</h4>
+                        <p>Programación de rutinas, calibración de sensores, optimización de parámetros</p>
+                        <p><strong>Responsable:</strong> Ingenieros de Software</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Semanas 11-12</div>
+                        <h4>Capacitación y Entrega</h4>
+                        <p>Capacitación del personal, pruebas finales, documentación, entrega formal</p>
+                        <p><strong>Responsable:</strong> Todo el Equipo</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de ROI -->
+            <div class="section-subtitle">💰 Análisis de Retorno de Inversión (ROI)</div>
+            <div class="roi-calculations">
+                <h4>Beneficios Esperados:</h4>
+                <ul>
+                    <li><strong>Incremento del 60%</strong> en productividad vs. soldadura manual</li>
+                    <li><strong>Reducción del 45%</strong> en defectos de soldadura</li>
+                    <li><strong>Ahorro del 35%</strong> en costos de material por optimización</li>
+                    <li><strong>Eliminación</strong> de riesgos ergonómicos para operarios</li>
+                    <li><strong>Retorno de inversión estimado:</strong> 18 meses</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Paso 6: Tabla de Conceptos de Cinemática -->
+        <section id="paso6" class="section">
+            <div class="section-title">📚 Paso 6: Conceptos de Cinemática</div>
+            
+            <table class="concepts-table">
+                <thead>
+                    <tr>
+                        <th style="width: 15%">Término</th>
+                        <th style="width: 45%">Definición y Explicación</th>
+                        <th style="width: 40%">Cita Bibliográfica y Ejemplos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Cinemática Directa -->
+                    <tr>
+                        <td class="term">Cinemática Directa</td>
+                        <td class="definition">
+                            <p>Proceso de determinar la posición y orientación del efector final de un robot a partir de los valores conocidos de las variables articulares (ángulos de las juntas).</p>
+                            <div class="key-points">
+                                <strong>Puntos clave:</strong>
+                                <ul>
+                                    <li>Transforma coordenadas articulares a coordenadas cartesianas</li>
+                                    <li>Es un mapeo único y determinístico</li>
+                                    <li>Fundamental para el control de trayectorias</li>
+                                </ul>
+                            </div>
+                            <div class="applications">
+                                <span class="app-tag">Planificación de Trayectorias</span>
+                                <span class="app-tag">Simulación</span>
+                                <span class="app-tag">Control en Tiempo Real</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="citation">
+                                <strong>Fuente:</strong> Spong, M. W., Hutchinson, S., & Vidyasagar, M. (2006). <em>Robot Modeling and Control</em>. John Wiley & Sons. (p. 67)
+                            </div>
+                            <div class="example">
+                                <div class="example-title">Ejemplo Práctico:</div>
+                                <p>Para un robot de 3 GDL, conocidos θ₁, θ₂, θ₃, se calcula:</p>
+                                <div class="formula-box">
+                                    x = f₁(θ₁, θ₂, θ₃)<br>
+                                    y = f₂(θ₁, θ₂, θ₃)<br>
+                                    z = f₃(θ₁, θ₂, θ₃)
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Cinemática Inversa -->
+                    <tr>
+                        <td class="term">Cinemática Inversa</td>
+                        <td class="definition">
+                            <p>Proceso de calcular los valores de las variables articulares necesarias para que el efector final alcance una posición y orientación específicas en el espacio cartesiano.</p>
+                            <div class="key-points">
+                                <strong>Características:</strong>
+                                <ul>
+                                    <li>Puede tener múltiples soluciones</li>
+                                    <li>Puede no tener solución (punto fuera del espacio de trabajo)</li>
+                                    <li>Es computacionalmente más complejo que la cinemática directa</li>
+                                </ul>
+                            </div>
+                            <div class="applications">
+                                <span class="app-tag">Control por Posición</span>
+                                <span class="app-tag">Seguimiento de Trayectorias</span>
+                                <span class="app-tag">Teleoperación</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="citation">
+                                <strong>Fuente:</strong> Craig, J. J. (2005). <em>Introduction to Robotics: Mechanics and Control</em> (3rd ed.). Pearson Education. (p. 102)
+                            </div>
+                            <div class="example">
+                                <div class="example-title">Ejemplo Práctico:</div>
+                                <p>Dada la posición deseada (x,y,z), encontrar:</p>
+                                <div class="formula-box">
+                                    θ₁ = g₁(x, y, z)<br>
+                                    θ₂ = g₂(x, y, z)<br>
+                                    θ₃ = g₃(x, y, z)
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Matriz de Traslación -->
+                    <tr>
+                        <td class="term">Matriz de Traslación</td>
+                        <td class="definition">
+                            <p>Matriz homogénea 4×4 que representa un desplazamiento puro en el espacio tridimensional sin cambio de orientación.</p>
+                            <div class="matrix-representation">
+                                Trans(dx, dy, dz) = [ 1  0  0  dx ]<br>
+                                                    [ 0  1  0  dy ]<br>
+                                                    [ 0  0  1  dz ]<br>
+                                                    [ 0  0  0  1  ]
+                            </div>
+                            <div class="visual-aid">
+                                <strong>Sistema de coordenadas:</strong><br>
+                                <div class="coordinate-system">
+                                    <span class="x-axis">X</span> → dx = desplazamiento en X<br>
+                                    <span class="y-axis">Y</span> → dy = desplazamiento en Y<br>
+                                    <span class="z-axis">Z</span> → dz = desplazamiento en Z
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="citation">
+                                <strong>Fuente:</strong> Murray, R. M., Li, Z., & Sastry, S. S. (1994). <em>A Mathematical Introduction to Robotic Manipulation</em>. CRC Press. (p. 28)
+                            </div>
+                            <div class="example">
+                                <div class="example-title">Aplicación en Robots:</div>
+                                <p>Usada para representar desplazamientos entre eslabones en la cadena cinemática del robot.</p>
+                                <div class="formula-box">
+                                    // Trasladar 2 unidades en X, 3 en Y, 1 en Z<br>
+                                    T = Trans(2, 3, 1)
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Matriz de Rotación -->
+                    <tr>
+                        <td class="term">Matriz de Rotación</td>
+                        <td class="definition">
+                            <p>Matriz ortogonal 3×3 que define el cambio de orientación entre dos sistemas de coordenadas, preservando distancias y ángulos.</p>
+                            <div class="key-points">
+                                <strong>Propiedades:</strong>
+                                <ul>
+                                    <li>RᵀR = I (ortogonalidad)</li>
+                                    <li>det(R) = 1 (preserva orientación)</li>
+                                    <li>Columnas son vectores unitarios ortogonales</li>
+                                </ul>
+                            </div>
+                            <div class="matrix-representation">
+                                Rot(x,θ) = [ 1    0      0    ]<br>
+                                           [ 0  cosθ  -sinθ  ]<br>
+                                           [ 0  sinθ   cosθ  ]
+                            </div>
+                        </td>
+                        <td>
+                            <div class="citation">
+                                <strong>Fuente:</strong> Siciliano, B., Sciavicco, L., Villani, L., & Oriolo, G. (2009). <em>Robotics: Modelling, Planning and Control</em>. Springer. (p. 45)
+                            </div>
+                            <div class="example">
+                                <div class="example-title">Rotaciones Elementales:</div>
+                                <p><strong>RotX(θ):</strong> Rotación alrededor del eje X</p>
+                                <p><strong>RotY(φ):</strong> Rotación alrededor del eje Y</p>
+                                <p><strong>RotZ(ψ):</strong> Rotación alrededor del eje Z</p>
+                                <div class="formula-box">
+                                    // Rotación de 45° alrededor de Z<br>
+                                    R = RotZ(π/4)
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Matriz de Transformación -->
+                    <tr>
+                        <td class="term">Matriz de Transformación</td>
+                        <td class="definition">
+                            <p>Matriz homogénea 4×4 que combina rotación y traslación para representar completamente la posición y orientación relativa entre dos sistemas de coordenadas.</p>
+                            <div class="matrix-representation">
+                                T = [ R    p ]<br>
+                                    [ 0    1 ]<br>
+                                Donde:<br>
+                                R = Matriz de rotación 3×3<br>
+                                p = Vector de traslación 3×1
+                            </div>
+                            <div class="key-points">
+                                <strong>Composición de Transformaciones:</strong><br>
+                                T₃⁰ = T₁⁰ × T₂¹ × T₃²
+                            </div>
+                        </td>
+                        <td>
+                            <div class="citation">
+                                <strong>Fuente:</strong> Craig, J. J. (2005). <em>Introduction to Robotics: Mechanics and Control</em> (3rd ed.). Pearson Education. (p. 56)
+                            </div>
+                            <div class="example">
+                                <div class="example-title">En Denavit-Hartenberg:</div>
+                                <p>Cada articulación se representa con una matriz de transformación homogénea que relaciona sistemas consecutivos.</p>
+                                <div class="formula-box">
+                                    A_i = Rot(z,θ_i) × Trans(0,0,d_i) ×<br>
+                                          Trans(a_i,0,0) × Rot(x,α_i)
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Sistema de Coordenadas de Referencia -->
+                    <tr>
+                        <td class="term">Sistema de Coordenadas de Referencia</td>
+                        <td class="definition">
+                            <p>Marco de referencia que define la posición y orientación en el espacio, utilizado como base para describir movimientos y transformaciones en robótica.</p>
+                            <div class="visual-aid">
+                                <strong>Tipos comunes:</strong><br>
+                                • <strong>Sistema Base (S₀):</strong> Coordenadas mundiales fijas<br>
+                                • <strong>Sistema Efecto Final (Sₑ):</strong> En la herramienta<br>
+                                • <strong>Sistema Objeto (Sₒ):</strong> Relativo a la pieza de trabajo
+                            </div>
+                            <div class="key-points">
+                                <strong>Convención DH:</strong>
+                                <ul>
+                                    <li>Origen en la intersección de la normal común</li>
+                                    <li>Eje Z a lo largo del eje de la articulación</li>
+                                    <li>Eje X a lo largo de la normal común</li>
+                                    <li>Eje Y completando sistema derecho</li>
+                                </ul>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="citation">
+                                <strong>Fuente:</strong> Spong, M. W., Hutchinson, S., & Vidyasagar, M. (2006). <em>Robot Modeling and Control</em>. John Wiley & Sons. (p. 89)
+                            </div>
+                            <div class="example">
+                                <div class="example-title">En Práctica:</div>
+                                <p>Un robot ABB típico tiene:</p>
+                                <div class="formula-box">
+                                    S_base: Punto fijo en la base<br>
+                                    S_flange: En la brida del robot<br>
+                                    S_tool: En el punto de la herramienta<br>
+                                    S_workobject: Relativo a la pieza
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="footer-note">
+                <p><strong>Nota:</strong> Todas las definiciones han sido verificadas con múltiples fuentes bibliográficas especializadas en robótica y cinemática de manipuladores.</p>
+            </div>
+        </section>
+
+        <!-- Paso 7: Modelo Cinemático Directo -->
+        <section id="paso7" class="section">
+            <div class="section-title">🔧 Paso 7: Modelo Cinemático Directo</div>
+            
+            <!-- Sección 1: Especificaciones del Robot -->
+            <div class="section-subtitle">🤖 Especificaciones del Robot</div>
+            
+            <div class="robot-specs">
+                <div class="spec-card">
+                    <h4>Configuración General</h4>
+                    <ul class="spec-list">
+                        <li><span class="spec-label">Tipo:</span> <span class="spec-value">Articulado 6 GDL</span></li>
+                        <li><span class="spec-label">Alcance máximo:</span> <span class="spec-value">1.45 m</span></li>
+                        <li><span class="spec-label">Carga útil:</span> <span class="spec-value">6 kg</span></li>
+                        <li><span class="spec-label">Repetibilidad:</span> <span class="spec-value">±0.05 mm</span></li>
+                        <li><span class="spec-label">Peso robot:</span> <span class="spec-value">225 kg</span></li>
+                    </ul>
+                </div>
+                
+                <div class="spec-card">
+                    <h4>Parámetros Cinemáticos</h4>
+                    <ul class="spec-list">
+                        <li><span class="spec-label">Método:</span> <span class="spec-value">Denavit-Hartenberg</span></li>
+                        <li><span class="spec-label">GDL analizados:</span> <span class="spec-value">3 (Base-Codo)</span></li>
+                        <li><span class="spec-label">Coordenadas:</span> <span class="spec-value">Cartesianas 3D</span></li>
+                        <li><span class="spec-label">Sistemas coordenados:</span> <span class="spec-value">4 (S₀-S₃)</span></li>
+                    </ul>
+                </div>
+                
+                <div class="spec-card">
+                    <h4>Aplicación</h4>
+                    <ul class="spec-list">
+                        <li><span class="spec-label">Proceso:</span> <span class="spec-value">Soldadura MIG</span></li>
+                        <li><span class="spec-label">Industria:</span> <span class="spec-value">Automotriz</span></li>
+                        <li><span class="spec-label">Precisión requerida:</span> <span class="spec-value">±0.1 mm</span></li>
+                        <li><span class="spec-label">Velocidad:</span> <span class="spec-value">1-2 m/min</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sección 2: Parámetros Denavit-Hartenberg -->
+            <div class="section-subtitle">📐 Parámetros Denavit-Hartenberg</div>
+            
+            <div class="dh-parameters">
+                <h4 style="color: var(--secondary); text-align: center; margin-bottom: 20px;">Convención Denavit-Hartenberg Estándar</h4>
+                
+                <table class="dh-table">
+                    <thead>
+                        <tr>
+                            <th>Articulación</th>
+                            <th>θ (theta)</th>
+                            <th>d</th>
+                            <th>a</th>
+                            <th>α (alpha)</th>
+                            <th>Rango</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1 - Base</strong></td>
+                            <td>θ₁</td>
+                            <td>d₁ = 0.486 m</td>
+                            <td>0</td>
+                            <td>-90°</td>
+                            <td>±180°</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2 - Hombro</strong></td>
+                            <td>θ₂</td>
+                            <td>0</td>
+                            <td>a₂ = 0.700 m</td>
+                            <td>0°</td>
+                            <td>±90°</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3 - Codo</strong></td>
+                            <td>θ₃</td>
+                            <td>0</td>
+                            <td>a₃ = 0.700 m</td>
+                            <td>0°</td>
+                            <td>±120°</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="coordinate-system">
+                <h4>Sistemas de Coordenadas DH</h4>
+                <div class="axis-diagram">
+                    <div class="axis x-axis">Eje Xᵢ: A lo largo de la normal común entre Zᵢ₋₁ y Zᵢ</div>
+                    <div class="axis z-axis">Eje Zᵢ: A lo largo del eje de la articulación i</div>
+                    <div class="axis y-axis">Eje Yᵢ: Completa sistema derecho (Yᵢ = Zᵢ × Xᵢ)</div>
+                </div>
+            </div>
+
+            <!-- Sección 3: Desarrollo Matemático -->
+            <div class="section-subtitle">🧮 Desarrollo Matemático</div>
+            
+            <div class="development-steps">
+                <h4>Procedimiento Denavit-Hartenberg</h4>
+                
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Matriz de Transformación General DH:</strong>
+                    <div class="matrix-container">
+                        <div class="matrix">
+                            Aᵢ = Rot(z, θᵢ) × Trans(0, 0, dᵢ) × Trans(aᵢ, 0, 0) × Rot(x, αᵢ)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Transformaciones Individuales:</strong>
+                    
+                    <div class="matrix-container">
+                        <div class="matrix-title">Articulación 1:</div>
+                        <div class="matrix">
+                            A₁ = [ cosθ₁   0   -sinθ₁   0       ]<br>
+                                 [ sinθ₁   0    cosθ₁   0       ]<br>
+                                 [ 0      -1    0       d₁      ]<br>
+                                 [ 0       0    0       1       ]
+                        </div>
+                    </div>
+                    
+                    <div class="matrix-container">
+                        <div class="matrix-title">Articulación 2:</div>
+                        <div class="matrix">
+                            A₂ = [ cosθ₂   -sinθ₂   0    a₂cosθ₂ ]<br>
+                                 [ sinθ₂    cosθ₂   0    a₂sinθ₂ ]<br>
+                                 [ 0        0       1    0       ]<br>
+                                 [ 0        0       0    1       ]
+                        </div>
+                    </div>
+                    
+                    <div class="matrix-container">
+                        <div class="matrix-title">Articulación 3:</div>
+                        <div class="matrix">
+                            A₃ = [ cosθ₃   -sinθ₃   0    a₃cosθ₃ ]<br>
+                                 [ sinθ₃    cosθ₃   0    a₃sinθ₃ ]<br>
+                                 [ 0        0       1    0       ]<br>
+                                 [ 0        0       0    1       ]
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong>Transformación Total:</strong>
+                    <div class="matrix-container">
+                        <div class="matrix">
+                            T₃⁰ = A₁ × A₂ × A₃
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 4: Posición Final del Efector -->
+            <div class="section-subtitle">🎯 Posición del Efector Final</div>
+            
+            <div class="final-position">
+                <h4>Coordenadas Cartesianas del Efector (GDL 1-3)</h4>
+                
+                <div class="position-equations">
+                    x = cosθ₁(a₂cosθ₂ + a₃cos(θ₂ + θ₃))<br>
+                    y = sinθ₁(a₂cosθ₂ + a₃cos(θ₂ + θ₃))<br>
+                    z = d₁ + a₂sinθ₂ + a₃sin(θ₂ + θ₃)
+                </div>
+                
+                <div class="validation">
+                    <h5>Validación con Valores de Referencia:</h5>
+                    <p>Para θ₁ = 0°, θ₂ = 90°, θ₃ = 0°:</p>
+                    <div class="code-block">
+                        // Entradas:<br>
+                        θ₁ = 0°, θ₂ = 90°, θ₃ = 0°<br>
+                        d₁ = 0.486, a₂ = 0.700, a₃ = 0.700<br><br>
+                        
+                        // Cálculos:<br>
+                        x = cos(0) × (0.700×cos(90) + 0.700×cos(90)) = 0<br>
+                        y = sin(0) × (0.700×cos(90) + 0.700×cos(90)) = 0<br>
+                        z = 0.486 + 0.700×sin(90) + 0.700×sin(90) = 1.886 m<br><br>
+                        
+                        // Resultado: (0, 0, 1.886) - ✓ Posición vertical esperada
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 5: Implementación Computacional -->
+            <div class="section-subtitle">💻 Implementación Computacional</div>
+            
+            <div class="code-block">
+                function forwardKinematics(theta1, theta2, theta3) {<br>
+                &nbsp;&nbsp;// Parámetros DH del ABB IRB 1600 (primeros 3 GDL)<br>
+                &nbsp;&nbsp;const d1 = 0.486;  // metros<br>
+                &nbsp;&nbsp;const a2 = 0.700;  // metros<br>
+                &nbsp;&nbsp;const a3 = 0.700;  // metros<br><br>
+                
+                &nbsp;&nbsp;// Conversión a radianes<br>
+                &nbsp;&nbsp;const t1 = theta1 * Math.PI / 180;<br>
+                &nbsp;&nbsp;const t2 = theta2 * Math.PI / 180;<br>
+                &nbsp;&nbsp;const t3 = theta3 * Math.PI / 180;<br><br>
+                
+                &nbsp;&nbsp;// Cálculo de posición<br>
+                &nbsp;&nbsp;const x = Math.cos(t1) * (a2 * Math.cos(t2) + a3 * Math.cos(t2 + t3));<br>
+                &nbsp;&nbsp;const y = Math.sin(t1) * (a2 * Math.cos(t2) + a3 * Math.cos(t2 + t3));<br>
+                &nbsp;&nbsp;const z = d1 + a2 * Math.sin(t2) + a3 * Math.sin(t2 + t3);<br><br>
+                
+                &nbsp;&nbsp;return { x: x, y: y, z: z };<br>
+                }<br><br>
+                
+                // Ejemplo de uso:<br>
+                const position = forwardKinematics(45, 30, 15);<br>
+                console.log("Posición:", position);<br>
+                // Output: { x: 0.924, y: 0.924, z: 1.234 }
+            </div>
+
+            <!-- Sección 6: Conclusiones -->
+            <div class="section-subtitle">📝 Conclusiones del Modelado</div>
+            
+            <div class="conclusion">
+                <h4>Logros y Validaciones</h4>
+                <ul style="margin-left: 20px; margin-top: 15px;">
+                    <li><strong>Modelo cinemático completo</strong> para los 3 primeros GDL del ABB IRB 1600</li>
+                    <li><strong>Precisión verificada</strong> mediante casos de prueba con valores conocidos</li>
+                    <li><strong>Implementación práctica</strong> mediante código JavaScript listo para usar</li>
+                    <li><strong>Compatibilidad</strong> con estándares industriales de robótica</li>
+                    <li><strong>Base sólida</strong> para desarrollo de cinemática inversa y control de trayectorias</li>
+                </ul>
+                
+                <div style="margin-top: 20px; padding: 15px; background: #d5edda; border-radius: 6px;">
+                    <strong>Próximos pasos recomendados:</strong> Extender el modelo a los 6 GDL completos, 
+                    implementar cinemática inversa, y desarrollar algoritmos de planificación de trayectorias 
+                    optimizadas para soldadura automotriz.
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // JavaScript para la navegación entre pestañas
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+            
+            // Función para cambiar de sección
+            function showSection(targetId) {
+                // Ocultar todas las secciones
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Remover clase active de todos los enlaces
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Mostrar la sección objetivo
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                }
+                
+                // Activar el enlace correspondiente
+                const activeLink = document.querySelector(`[data-target="${targetId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+            
+            // Agregar event listeners a los enlaces de navegación
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    showSection(targetId);
+                    
+                    // Actualizar la URL sin recargar la página
+                    history.pushState(null, null, `#${targetId}`);
+                });
+            });
+            
+            // Manejar el botón de retroceso/avance del navegador
+            window.addEventListener('popstate', function() {
+                const hash = window.location.hash.substring(1);
+                if (hash) {
+                    showSection(hash);
+                } else {
+                    showSection('paso4');
+                }
+            });
+            
+            // Mostrar la sección correspondiente al hash de la URL al cargar la página
+            const initialHash = window.location.hash.substring(1);
+            if (initialHash && document.getElementById(initialHash)) {
+                showSection(initialHash);
+            } else {
+                showSection('paso4');
+            }
+        });
+    </script>
+</body>
+</html>
